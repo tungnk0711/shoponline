@@ -1,0 +1,13 @@
+
+.clear {
+    clear: both;
+}
+
+.product-item {
+    display: inline-block;
+    width: 300px;
+    height: 250px;
+    border: 1px solid gray;
+    margin: 5px;
+    padding: 5px;
+}

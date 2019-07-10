@@ -26,7 +26,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public Product findById(Long id) {
-        TypedQuery<Product> query = em.createQuery("select p from Product p where  p.id=?1", Product.class);
+        TypedQuery<Product> query = em.createQuery("SELECT p FROM Product p WHERE p.id like?1", Product.class);
         query.setParameter(1, id);
         try {
             return query.getSingleResult();
@@ -37,6 +37,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public void save(Product model) {
+
         if(model.getId() != null){
             em.merge(model);
         } else {

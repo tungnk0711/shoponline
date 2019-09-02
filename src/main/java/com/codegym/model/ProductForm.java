@@ -17,6 +17,8 @@ public class ProductForm {
     private Double quantity;
     private String description;
     private Integer active;
+    private Category category;
+
 
     public ProductForm() {}
 
@@ -104,5 +106,13 @@ public class ProductForm {
 
     public void setActive(Integer active) {
         this.active = active;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

@@ -1,5 +1,6 @@
 package com.codegym.model;
 
+import org.hibernate.annotations.Proxy;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -12,6 +13,14 @@ import java.util.Date;
 @NamedQuery(
         name = "findAllProducts",
         query = "SELECT p FROM Product p")
+@NamedStoredProcedureQuery(
+        name = "getProductById",
+        procedureName = "getProductById",
+        parameters = {
+                @StoredProcedureParameter(name = "in_id", mode = ParameterMode.IN, type = Integer.class),
+                @StoredProcedureParameter(name = "out_name", mode = ParameterMode.OUT, type = String.class),
+        }
+)
 public class Product {
 
     @Id
@@ -27,10 +36,15 @@ public class Product {
     private String description;
     private Integer active;
 
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     public Product() {
     }
 
-    public Product(Date createDate, String image, String name, Double price, Double quantity, String description, Integer active) {
+    public Product(Date createDate, String image, String name, Double price, Double quantity, String description, Integer active, Category category) {
         this.createDate = createDate;
         this.image = image;
         this.name = name;
@@ -38,9 +52,10 @@ public class Product {
         this.quantity = quantity;
         this.description = description;
         this.active = active;
+        this.category = category;
     }
 
-    public Product(Long id, Date createDate, String image, String name, Double price, Double quantity, String description, Integer active) {
+    public Product(Long id, Date createDate, String image, String name, Double price, Double quantity, String description, Integer active, Category category) {
         this.id = id;
         this.createDate = createDate;
         this.image = image;
@@ -49,6 +64,7 @@ public class Product {
         this.quantity = quantity;
         this.description = description;
         this.active = active;
+        this.category = category;
     }
 
     public Long getId() {
@@ -115,7 +131,11 @@ public class Product {
         this.active = active;
     }
 
-    public void getSumPrice(){
+    public Category getCategory() {
+        return category;
+    }
 
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

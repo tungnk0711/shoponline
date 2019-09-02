@@ -1,7 +1,9 @@
 package com.codegym.controller;
 
+import com.codegym.model.Category;
 import com.codegym.model.Product;
 import com.codegym.model.ProductForm;
+import com.codegym.service.CategoryService;
 import com.codegym.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,9 +42,15 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private CategoryService categoryService;
+
     @RequestMapping("/products")
     public ModelAndView listProducts() {
-        List<Product> products = productService.findAll();
+
+        String name = productService.getProductById(34);
+
+        Iterable<Product> products = productService.findAll();
         ModelAndView modelAndView = new ModelAndView("/product/list", "products", products);
         return modelAndView;
     }
@@ -51,6 +59,7 @@ public class ProductController {
     public ModelAndView showCreateForm() {
         ModelAndView modelAndView = new ModelAndView("/product/create");
         modelAndView.addObject("productform", new ProductForm());
+
         return modelAndView;
     }
 
@@ -77,7 +86,7 @@ public class ProductController {
         // tham khảo: https://github.com/codegym-vn/spring-static-resources
 
         // tao doi tuong de luu vao db
-        Product productObject = new Product(productform.getCreateDate(), fileName, productform.getName(), productform.getPrice(), productform.getQuantity(), productform.getDescription(), productform.getActive());
+        Product productObject = new Product(productform.getCreateDate(), fileName, productform.getName(), productform.getPrice(), productform.getQuantity(), productform.getDescription(), productform.getActive(), productform.getCategory());
 
         // luu vao db
         productService.save(productObject);
@@ -126,7 +135,7 @@ public class ProductController {
         }
 
         // tao doi tuong de luu vao db
-        Product productObject = new Product(productform.getId(), productform.getCreateDate(), fileName, productform.getName(), productform.getPrice(), productform.getQuantity(), productform.getDescription(), productform.getActive());
+        Product productObject = new Product(productform.getId(), productform.getCreateDate(), fileName, productform.getName(), productform.getPrice(), productform.getQuantity(), productform.getDescription(), productform.getActive(), productform.getCategory());
 
         // luu vao db
         productService.save(productObject);
@@ -137,6 +146,11 @@ public class ProductController {
         modelAndView.addObject("message", "Product edited successfully");
         return modelAndView;
 
+    }
+
+    @ModelAttribute("categories")
+    public Iterable<Category> categories() {
+        return categoryService.findAll();
     }
 
 

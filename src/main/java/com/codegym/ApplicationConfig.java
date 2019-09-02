@@ -1,8 +1,12 @@
 package com.codegym;
 
 import com.codegym.Converter.StringToLocalDateConverter;
+import com.codegym.formatter.CategoryFormatter;
 import com.codegym.repository.ProductRepository;
-import com.codegym.repository.Impl.ProductRepositoryImpl;
+import com.codegym.service.CategoryService;
+import com.codegym.service.CustomerService;
+import com.codegym.service.Impl.CategoryServiceImpl;
+import com.codegym.service.Impl.CustomerServiceImpl;
 import com.codegym.service.ProductService;
 import com.codegym.service.Impl.ProductServiecImpl;
 import org.springframework.beans.BeansException;
@@ -10,16 +14,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.converter.GenericConverter;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -29,9 +34,13 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
@@ -43,7 +52,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
@@ -53,6 +62,7 @@ import java.util.Set;
 @EnableSpringDataWebSupport
 @ComponentScan("com.codegym")
 @PropertySource("classpath:global_config_app.properties")
+@EnableJpaRepositories("com.codegym.repository")
 public class ApplicationConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 
     @Autowired
@@ -83,14 +93,20 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter implements Applic
     }
 
     @Bean
-    public ProductRepository productRepository() {
-        return new ProductRepositoryImpl();
+    public CategoryService categoryService() {
+
+        return new CategoryServiceImpl();
     }
 
     @Bean
     public ProductService productService() {
 
         return new ProductServiecImpl();
+    }
+
+    @Bean
+    public CustomerService customerService(){
+        return  new CustomerServiceImpl();
     }
 
 
@@ -177,7 +193,7 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter implements Applic
         return resolver;
     }
 
-    //Config Converters
+    //Config Converter
     @Bean
     public Set<StringToLocalDateConverter> converters() {
         Set<StringToLocalDateConverter> converters = new HashSet<StringToLocalDateConverter>();
@@ -186,12 +202,39 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter implements Applic
 
     }
 
+    //Config Formatter
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addFormatter(new CategoryFormatter(applicationContext.getBean(CategoryService.class)));
+    }
+
     //Config ConversionServiceFactoryBean
     @Bean
     public ConversionServiceFactoryBean conversionService() {
         ConversionServiceFactoryBean conversionService = new ConversionServiceFactoryBean();
         conversionService.setConverters(converters());
         return conversionService;
+    }
+
+    @Bean
+    public MessageSource messageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename("message");
+        return messageSource;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+        interceptor.setParamName("lang");
+        registry.addInterceptor(interceptor);
+    }
+
+    @Bean
+    public LocaleResolver localeResolver() {
+        SessionLocaleResolver localeResolver = new SessionLocaleResolver();
+        localeResolver.setDefaultLocale(new Locale("en"));
+        return localeResolver;
     }
 
 

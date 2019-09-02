@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Categories</title>
+</head>
+<body>
+<a href="/create-category">Create new category</a>
+<h1>Categories</h1>
+
+
+<div>
+    <div th:each="category,iterStat : ${categories}" th:class="${iterStat.odd}? 'odd'">
+        <div class="category-item">
+            <h2 th:text="${category.name}"></h2>
+
+            <ul th:each="product,iterStat : ${category.getProducts()}" th:class="${iterStat.odd}? 'odd'">
+                <li th:text="${product.name}"></li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -17,6 +17,14 @@
 <form th:action="@{/save-product}" th:object="${productform}" method="post" enctype="multipart/form-data">
     <table>
         <tr>
+            <td>Category:</td>
+            <td>
+                <select th:field="*{category}">
+                    <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
             <td>Create Date:</td>
             <td><input type="date" th:field="*{createDate}" /></td>
         </tr>

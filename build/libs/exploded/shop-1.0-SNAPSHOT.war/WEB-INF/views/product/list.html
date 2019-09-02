@@ -13,6 +13,7 @@
     <div th:each="product,iterStat : ${products}" th:class="${iterStat.odd}? 'odd'">
         <div class="product-item">
             <img width="150px" height="150px" th:src="@{'/i/' + ${product.image}}">
+            <p th:text="${product.category.name}"></p>
             <p th:text="${product.name}"></p>
             <p th:text="${product.price}"></p>
             <p th:text="${product.quantity}"></p>

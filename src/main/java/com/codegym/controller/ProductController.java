@@ -26,6 +26,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Controller
 @PropertySource("classpath:global_config_app.properties")
@@ -33,11 +35,6 @@ public class ProductController {
 
     @Autowired
     Environment env;
-
-
-    // thu muc luu tru file tren server
-    //private static String UPLOAD_LOCATION = "/Users/nguyenkhanhtung/Documents/JAVABOOTCAMP/shop/src/main/webapp/WEB-INF/resources/img/";
-
 
     @Autowired
     private ProductService productService;
@@ -48,9 +45,15 @@ public class ProductController {
     @RequestMapping("/products")
     public ModelAndView listProducts() {
 
+        // demo store procedure
         String name = productService.getProductById(34);
 
+        // demo store procedure
+        // https://forums.mysql.com/read.php?98,386018,386040#msg-386040
+        Iterable<Product> productList = productService.getAllProducts();
+
         Iterable<Product> products = productService.findAll();
+
         ModelAndView modelAndView = new ModelAndView("/product/list", "products", products);
         return modelAndView;
     }
@@ -89,7 +92,8 @@ public class ProductController {
         Product productObject = new Product(productform.getCreateDate(), fileName, productform.getName(), productform.getPrice(), productform.getQuantity(), productform.getDescription(), productform.getActive(), productform.getCategory());
 
         // luu vao db
-        productService.save(productObject);
+        //productService.save(productObject);
+        productService.addProduct(productObject);
 
 
         ModelAndView modelAndView = new ModelAndView("/product/create");

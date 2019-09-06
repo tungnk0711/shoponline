@@ -1,6 +1,7 @@
 package com.codegym.service.Impl;
 
 import com.codegym.model.Product;
+import com.codegym.repository.ProductProcedureRepository;
 import com.codegym.repository.ProductRepository;
 import com.codegym.service.ProductService;
 import org.hibernate.Session;
@@ -24,29 +25,22 @@ public class ProductServiecImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    @PersistenceContext
-    private EntityManager em;
+    @Autowired
+    ProductProcedureRepository productProcedureRepository;
 
-    private SessionFactory factory;
-
-
-    public SessionFactory getFactory() {
-        return new Configuration().configure().buildSessionFactory();
+    @Override
+    public Iterable<Product> getAllProducts() {
+        return productProcedureRepository.getAllProducts();
     }
 
+    @Override
+    public void addProduct(Product product) {
+        productProcedureRepository.addProduct(product);
+    }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public String getProductById(int id) {
-
-// Getting the named stored procedure from the persistence unit and settting the parameters values.
-        StoredProcedureQuery getProductNameStoredProcedure = em.createNamedStoredProcedureQuery("getProductById");
-        getProductNameStoredProcedure.setParameter("in_id", id);
-        getProductNameStoredProcedure.execute();
-
-// Stored procedure call
-        String name = (String)getProductNameStoredProcedure.getOutputParameterValue("out_name");
-
-        return name;
+        return productProcedureRepository.getProductById(id);
     }
 
     @Override

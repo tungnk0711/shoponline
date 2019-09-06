@@ -2,6 +2,8 @@ package com.codegym;
 
 import com.codegym.Converter.StringToLocalDateConverter;
 import com.codegym.formatter.CategoryFormatter;
+import com.codegym.repository.Impl.ProductProcedureRepositoryImpl;
+import com.codegym.repository.ProductProcedureRepository;
 import com.codegym.repository.ProductRepository;
 import com.codegym.service.CategoryService;
 import com.codegym.service.CustomerService;
@@ -102,6 +104,12 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter implements Applic
     public ProductService productService() {
 
         return new ProductServiecImpl();
+    }
+
+    @Bean
+    public ProductProcedureRepository productProcedureRepository() {
+
+        return new ProductProcedureRepositoryImpl();
     }
 
     @Bean

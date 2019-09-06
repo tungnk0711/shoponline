@@ -11,5 +11,4 @@ public interface ProductRepository extends PagingAndSortingRepository<Product, L
 
     @Query("SELECT p from Product p LEFT JOIN p.category c")
     List<Product> findAllWithEagerRelationships();
-
 }

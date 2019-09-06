@@ -15,5 +15,12 @@ public interface ProductService {
 
     List<Product> findAllWithEagerRelationships();
 
-    String getProductById(int  id);
+    String getProductById(int id);
+
+    Iterable<Product> getAllProducts();
+
+    void addProduct(Product product);
+
+
+
 }

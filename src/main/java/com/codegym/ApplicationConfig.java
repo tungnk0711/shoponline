@@ -72,7 +72,7 @@ public class ApplicationConfig extends WebMvcConfigurerAdapter implements Applic
 
     private ApplicationContext applicationContext;
 
-    // Cấu hình để sử dụng các file nguồn tĩnh (html, image, ..)
+    // Cấu hình để sử dụng các file nguồn tĩnh (css, image, js..)
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
